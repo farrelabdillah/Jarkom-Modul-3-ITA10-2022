@@ -34,7 +34,14 @@ Berikut adalah Dokumentasi dan langkah pengerjaan untuk laporan resmi praktikum 
  <img src="Screenshot/5.PNG">
  
  <br>
- 
+
+# **Soal Shift: DHCP**
+- Semua client yang ada HARUS menggunakan konfigurasi IP dari DHCP Server.
+- Client yang melalui Switch1 mendapatkan range IP dari [prefix IP].1.50 - [prefix IP].1.88 dan [prefix IP].1.120 - [prefix IP].1.155 
+- Client yang melalui Switch3 mendapatkan range IP dari [prefix IP].3.10 - [prefix IP].3.30 dan [prefix IP].3.60 - [prefix IP].3.85 
+- Client mendapatkan DNS dari WISE dan client dapat terhubung dengan internet melalui DNS tersebut.
+- Lama waktu DHCP server meminjamkan alamat IP kepada Client yang melalui Switch1 selama 5 menit sedangkan pada client yang melalui Switch3 selama 10 menit. Dengan -     waktu maksimal yang dialokasikan untuk peminjaman alamat IP selama 115 menit. 
+
 # **Langkah Pengerjaan: DHCP**
 - Menginstall isc-dhcp-relay pada Ostania untuk membuatnya menjadi DHCP Relay.
   <br>
@@ -120,11 +127,9 @@ Berikut adalah Dokumentasi dan langkah pengerjaan untuk laporan resmi praktikum 
   
   ```forwarders {ip}``` sendiri berguna sebagai DNS Forwarder kepada IP yang dituju.
   <br>
-- 
--
--
--
-
+- Pada setiap DHCP client akan dilakukan testing IP, testing ini bertujuan untuk membuktikan bahwa setiap client mendapatkan IP yang sesuai dengan range yang telah       dibagikan oleh DHCP server dan mendapatkan akses internet lewat WISE (DNS Server) dengan IP yang sesuai yaitu 192.214.2.2. Contohnya adalah seperti ini: 
+  <br>
+  <img src="Screenshot/9.PNG">
 
 # **Langkah Pengerjaan: Proxy**
 SSS, Garden, dan Eden digunakan sebagai client Proxy agar pertukaran informasi dapat terjamin keamanannya, juga untuk mencegah kebocoran data. Pada Proxy Server di Berlint, Loid berencana untuk mengatur bagaimana Client dapat mengakses internet. Artinya setiap client harus menggunakan Berlint sebagai HTTP & HTTPS proxy. Adapun kriteria pengaturannya adalah sebagai berikut:
