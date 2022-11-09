@@ -36,76 +36,17 @@ Berikut adalah Dokumentasi dan langkah pengerjaan untuk laporan resmi praktikum 
  <br>
  
 # **Langkah Pengerjaan: DHCP**
-- Pada Westalis, menginstall isc-dhcp-relay dan namserver 192.214.0.3 akan dibuat sehingga dapat terhubung ke internet. 
-  <br>
-  <img src="Screenshot/9.PNG">
-  <br>
-  <br>
-  Setelah itu menambahkan:
-  
-  ```INTERFACES="eth0"```
-  pada /etc/default/isc-dhcp-server. 
-  <br>
-  <img src="Screenshot/8.PNG">
-- Menjalankan relay dengan konfig:
-  ```
-  subnet 192.214.2.0 netmask 255.255.255.0 {}
-  ```
-  pada /etc/dhcp/dhcpd.conf
-- Setelah itu, pada switch1 menambahkan konfig:
-  ```
-  subnet 192.214.1.0 netmask 255.255.255.0 {
-    range 192.214.1.50 192.214.1.88;
-    range 192.214.1.120 192.214.1.155;
-    option routers 192.214.1.1;
-    option broadcast-address 192.214.1.255;
-    option domain-name-servers 192.214.2.2;
-    default-lease-time 300;
-    max-lease-time 6900;
-  }
-  ``` 
-  pada /etc/dhcp/dhcpd.conf
-  <br>
-  Range diatur sesuai dengan yang diminta oleh soal. DNS diarahkan ke IP WISE yaitu 192.214.2.2 seperti yang tertulis diatas. Waktu default peminjaman alamat IP ke       client adalah 300 detik, sedangkan waktu maksimalnya adalah 6900 detik. 
-- Setelah itu, pada switch3 menambahkan konfig:
-  ```
-  subnet 192.214.3.0 netmask 255.255.255.0 {
-    range 192.214.3.10 192.214.3.30;
-    range 192.214.3.60 192.214.3.85;
-    option routers 192.214.3.1;
-    option broadcast-address 192.214.1.255;
-    option domain-name-servers 192.214.2.2;
-    default-lease-time 600;
-    max-lease-time 6900;
-  }
-  ``` 
-  pada /etc/dhcp/dhcpd.conf
-  <br>
-  Range diatur sesuai dengan yang diminta oleh soal. DNS diarahkan ke IP WISE yaitu 192.214.2.2 seperti yang tertulis diatas. Waktu default peminjaman alamat IP ke       client adalah 600 detik, sedangkan waktu maksimalnya adalah 6900 detik.  
-- Konfigurasi pada setiap client dengan konfigurasi IP sesuai dari DHCP Server:
-  <br>
-  <img src="Screenshot/6.PNG">
-  <img src="Screenshot/7.PNG">
-- Untuk membuat seluruh client dapat mengakses internet, pertama-tama akan diinstallkan bind9 pada WISE:
-  <br>
-  <img src="Screenshot/10.PNG">
-- Lalu WISE akan ditambahkan: 
-  ```
-  options {
-    directory "/var/cache/bind";
- 
-    forwarders {
-            192.168.122.1;
-    };
- 
-    allow-query { any; };
- 
-    auth-nxdomain no;    # conform to RFC1035
-    listen-on-v6 { any; };
-  }
-  ```
-  di /etc/bind/named.conf.options agar WISE dapat mengakses internet.
-- 
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
 
 
 # **Langkah Pengerjaan: Proxy**
