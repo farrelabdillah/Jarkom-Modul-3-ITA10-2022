@@ -41,6 +41,7 @@ Berikut adalah Dokumentasi dan langkah pengerjaan untuk laporan resmi praktikum 
 - Client yang melalui Switch3 mendapatkan range IP dari [prefix IP].3.10 - [prefix IP].3.30 dan [prefix IP].3.60 - [prefix IP].3.85 
 - Client mendapatkan DNS dari WISE dan client dapat terhubung dengan internet melalui DNS tersebut.
 - Lama waktu DHCP server meminjamkan alamat IP kepada Client yang melalui Switch1 selama 5 menit sedangkan pada client yang melalui Switch3 selama 10 menit. Dengan -     waktu maksimal yang dialokasikan untuk peminjaman alamat IP selama 115 menit. 
+- Loid dan Franky berencana menjadikan Eden sebagai server untuk pertukaran informasi dengan alamat IP yang tetap dengan IP [prefix IP].3.13.
 
 # **Langkah Pengerjaan: DHCP**
 - Menginstall isc-dhcp-relay pada Ostania untuk membuatnya menjadi DHCP Relay.
@@ -127,11 +128,23 @@ Berikut adalah Dokumentasi dan langkah pengerjaan untuk laporan resmi praktikum 
   
   ```forwarders {ip}``` sendiri berguna sebagai DNS Forwarder kepada IP yang dituju.
   <br>
-- Pada setiap DHCP client akan dilakukan testing IP, testing ini bertujuan untuk membuktikan bahwa setiap client mendapatkan IP yang sesuai dengan range yang telah       dibagikan oleh DHCP server dan mendapatkan akses internet lewat WISE (DNS Server) dengan IP yang sesuai yaitu 192.214.2.2. Contohnya adalah seperti ini: 
+- Untuk menjadikan Eden sebagai server pertukaran informasi dengan alamat IP tetap yang telah ditentukan ([Prefix IP].3.13), pertama-tama kita akan mengubah             /etc/network/interfaces pada Eden menjadi:
   <br>
   <img src="Screenshot/9.PNG">
-
-# **Langkah Pengerjaan: Proxy**
+  <br>
+  <br>
+  Setelah itu, dalam Westalis ditambahkan:
+  
+  ```
+  host Eden {
+    hardware ethernet 46:37:0c:a6:58:22;
+    fixed-address 192.214.3.13;
+  }
+  ```
+  pada /etc/dhcp/dhcpd.conf untuk mengubah fixed address nya.
+  <br>
+  
+# **Soal Shift: Proxy**
 SSS, Garden, dan Eden digunakan sebagai client Proxy agar pertukaran informasi dapat terjamin keamanannya, juga untuk mencegah kebocoran data. Pada Proxy Server di Berlint, Loid berencana untuk mengatur bagaimana Client dapat mengakses internet. Artinya setiap client harus menggunakan Berlint sebagai HTTP & HTTPS proxy. Adapun kriteria pengaturannya adalah sebagai berikut:
 - Client hanya dapat mengakses internet diluar (selain) hari & jam kerja (senin-jumat 08.00 - 17.00) dan hari libur (dapat mengakses 24 jam penuh)
 - Adapun pada hari dan jam kerja sesuai nomor (1), client hanya dapat mengakses domain loid-work.com dan franky-work.com (IP tujuan domain dibebaskan)
@@ -140,3 +153,13 @@ SSS, Garden, dan Eden digunakan sebagai client Proxy agar pertukaran informasi d
 - Setelah diterapkan, ternyata peraturan nomor (4) mengganggu produktifitas saat hari kerja, dengan demikian pembatasan kecepatan hanya diberlakukan untuk pengaksesan internet pada hari libur
 <br>
 <img src="Screenshot/Tabel.PNG">
+
+# **Langkah Pengerjaan: Proxy**
+-
+-
+-
+-
+-
+-
+-
+-
