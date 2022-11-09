@@ -36,14 +36,91 @@ Berikut adalah Dokumentasi dan langkah pengerjaan untuk laporan resmi praktikum 
  <br>
  
 # **Langkah Pengerjaan: DHCP**
--
--
--
--
--
--
--
--
+- Menginstall isc-dhcp-relay pada Ostania untuk membuatnya menjadi DHCP Relay.
+  <br>
+  <img src="Screenshot/6.PNG">
+  <br>
+  <br>
+  dan Menambahkan:
+  ```
+  SERVERS="192.214.2.4"
+  INTERFACES="eth1 eth2 eth3"
+  OPTIONS=""
+  ```
+  pada /etc/default/isc-dhcp-relay.
+  <br>
+  <br>
+  Setelah itu, melakukan ```service isc-dhcp-relay restart``` untuk mengonfirmasi perubahan pada relay.
+  <br>
+- Menginstall isc-dhcp-server pada Westalis untuk membuatnya menjadi DHCP Server.
+  <br>
+  <img src="Screenshot/7.PNG">
+  <br>
+  <br>
+  dan Menambahkan ```INTERFACES="eth0"``` pada /etc/default/isc-dhcp-server
+  <br>
+- pada /etc/dhcp/dhcpd.conf, akan ditambahkan config untuk menjalankan relay yaitu:
+  ```
+  subnet 192.214.2.0 netmask 255.255.255.0 {}
+  ```
+  <br>
+  Peminjaman IP akan dilakukan dengan waktu default dan maximum tertentu yang telah diarahkan ke IP WISE (192.214.2.2).
+  Untuk melakukan hal tersebut, akan dilakukan penambahan config pada Switch1 dengan:
+  
+  ```
+  subnet 192.214.1.0 netmask 255.255.255.0 {
+    range 192.214.1.50 192.214.1.88;
+    range 192.214.1.120 192.214.1.155;
+    option routers 192.214.1.1;
+    option broadcast-address 192.214.1.255;
+    option domain-name-servers 192.214.2.2;
+    default-lease-time 300;
+    max-lease-time 6900;
+  }
+  ```
+  Sementara pada Switch3 akan ditambahkan config:
+  
+  ```
+  subnet 192.214.3.0 netmask 255.255.255.0 {
+    range 192.214.3.10 192.214.3.30;
+    range 192.214.3.60 192.214.3.85;
+    option routers 192.214.3.1;
+    option broadcast-address 192.214.1.255;
+    option domain-name-servers 192.214.2.2;
+    default-lease-time 600;
+    max-lease-time 6900;
+  }
+  ```
+ 
+  Melakukan ```service isc-dhcp-server restart``` untuk restart pada DHCP Server.
+  
+  <br>
+- Untuk membuat semua user pada Switch1 dan Switch3 sesuai dengan DHCP Server, akan dilakukan perubahan pada setiap konfigurasinya menjadi:
+  <br>
+  <img src="Screenshot/8.PNG">
+  <br>
+- Dalam node WISE akan ditambahkan: 
+
+  ```
+  options {
+    directory "/var/cache/bind";
+ 
+    forwarders {
+            192.168.122.1;
+    };
+ 
+    allow-query { any; };
+ 
+    auth-nxdomain no;    # conform to RFC1035
+    listen-on-v6 { any; };
+  };
+  ``` 
+  pada /etc/bind/named.conf.options
+  <br>
+  
+  ```forwarders {ip}``` sendiri berguna sebagai DNS Forwarder kepada IP yang dituju.
+  <br>
+- 
 -
 -
 -
