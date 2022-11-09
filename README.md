@@ -40,6 +40,7 @@ Berikut adalah Dokumentasi dan langkah pengerjaan untuk laporan resmi praktikum 
   Konfigurasi pada setiap client dengan konfigurasi IP sesuai dari DHCP Server:
   <br>
   <img src="Screenshot/6.PNG">
+  <img src="Screenshot/7.PNG">
 - Client yang melalui Switch1 mendapatkan range IP dari [prefix IP].1.50 - [prefix IP].1.88 dan [prefix IP].1.120 - [prefix IP].1.155
 - Client yang melalui Switch3 mendapatkan range IP dari [prefix IP].3.10 - [prefix IP].3.30 dan [prefix IP].3.60 - [prefix IP].3.85
 - Client mendapatkan DNS dari WISE dan client dapat terhubung dengan internet melalui DNS tersebut
