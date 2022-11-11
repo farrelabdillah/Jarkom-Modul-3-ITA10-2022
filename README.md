@@ -171,7 +171,6 @@ SSS, Garden, dan Eden digunakan sebagai client Proxy agar pertukaran informasi d
     apt install \
     squid -y
   ```
-  
 - Setelah itu mengaplikasikan lynx pada beberapa node karena SSS, Garden, dan Eden dijadikan sebagai client proxy
   ```
   elif [[ $(hostname) = "Eden" ]]; then
@@ -195,7 +194,7 @@ SSS, Garden, dan Eden digunakan sebagai client Proxy agar pertukaran informasi d
     speedtest-cli -y
   ```
   Selain itu, akan dilakukan penginstallan client speedtest untuk menguji speed limit sesuai dengan tabel.
-- Karena yang diakses nantinya akan berbentuk HTTP dan proxy, maka akan dikonfigurasikan domain proxy dengan:
+- Melakukan konfigurasi menuju domain yang akan diakses yaitu loid-work.com dan franky-work.com:
   <br>
   <img src="Screenshot/10.PNG">
   <br>
@@ -205,18 +204,117 @@ SSS, Garden, dan Eden digunakan sebagai client Proxy agar pertukaran informasi d
   <br>
   <img src="Screenshot/12.PNG">
   <br>
-  
+
 - Menentukan HTTP port dengan:
   ```
   http_port 8080
   dns_nameservers 192.214.2.2
   ```
-  Dan nameserver pada 192.214.2.2 agar dapat connect menuju domain proxy yang dikonfigurasikan (loid-work.com dan franky-work.com).
--
--
--
--
--
+  dan menambahkan dns_nameserver agar bisa connect menuju domain loid-work dan franky-work.
+  
+- Agar dapat membagi kebutuhan/restriction sesuai dengan soal shift dengan rapi, dalam directory Squid akan dimasukan konfigurasi acl seperti berikut:
+  ```
+    cat << EOS > /etc/squid/squid.conf
+  include /etc/squid/acl-time.conf
+  include /etc/squid/acl-bandwidth.conf
+  include /etc/squid/acl-port.conf
+  ``` 
+  
+- Dengan dimasukkan nya beberapa konfigurasi tersebut, kita dapat menentukan batasan-batasan sesuai dengan instruksi soal shift:
+  <br>
+  ```
+  visible_hostname Berlint
+  ```
+  1. Client hanya dapat mengakses internet diluar (selain) hari & jam kerja (senin-jumat 08.00 - 17.00) dan hari libur (dapat mengakses 24 jam penuh)
+     ```
+     http_access allow !WORKING_HOUR_TIME
+     http_access deny all
+     ```
+     ```
+        cat << EOS > /etc/squid/acl-time.conf
+     acl WORKING_HOUR_TIME time MTWHF 08:00-16:59
+     acl WEEKEND_TIME time SA 00:00-23:59
+     ```
+  2. Adapun pada hari dan jam kerja sesuai nomor (1), client hanya dapat mengakses domain loid-work.com dan franky-work.com (IP tujuan domain dibebaskan).
+     ```
+     acl WORKING_HOUR_SITES dstdomain "/etc/squid/working-hour-sites.acl"
+     ```
+     ```
+       cat << EOS > /etc/squid/working-hour-sites.acl
+     loid-work.com
+     franky-work.com
+     ```
+  3. Saat akses internet dibuka, client dilarang untuk mengakses web tanpa HTTPS. (Contoh web HTTP: http://example.com)
+     ```
+       cat << EOS > /etc/squid/acl-port.conf
+     acl HTTPS_PORT port 443
+     acl CONNECT method CONNECT
+     ``` 
+     ```
+     http_access deny !HTTPS_PORT
+     http_access deny CONNECT !HTTPS_PORT
+     ```
+  4. Agar menghemat penggunaan, akses internet dibatasi dengan kecepatan maksimum 128 Kbps pada setiap host (Kbps = kilobit per second; lakukan pengecekan pada tiap        host, ketika 2 host akses internet pada saat bersamaan, keduanya mendapatkan speed maksimal yaitu 128 Kbps)
+     ```
+       cat << EOS > /etc/squid/acl-bandwidth.conf
+     delay_pools 1
+     delay_class 1 1
+     delay_access 1 allow WEEKEND_TIME
+     delay_parameters 1 16000/16000
+     ```  
+  5. Setelah diterapkan, ternyata peraturan nomor (4) mengganggu produktifitas saat hari kerja, dengan demikian pembatasan kecepatan hanya diberlakukan untuk                pengaksesan internet pada hari libur
+     <br>
+     <br>
+     <img src="Screenshot/Tabel.PNG">
+     <br>
+     <br>
+     Dengan beberapa pembatasan seperti diatas, maka hasil akhir script proxy adalah sebagai berikut:
+     ```
+        acl WORKING_HOUR_SITES dstdomain "/etc/squid/working-hour-sites.acl"
+ 
+      http_access allow WORKING_HOUR_SITES WORKING_HOUR_TIME
+ 
+      http_access deny !HTTPS_PORT
+      http_access deny CONNECT !HTTPS_PORT
+ 
+      http_access allow !WORKING_HOUR_TIME
+      http_access deny all
+ 
+      visible_hostname Berlint
+      EOS
+ 
+        cat << EOS > /etc/squid/acl-time.conf
+      acl WORKING_HOUR_TIME time MTWHF 08:00-16:59
+      acl WEEKEND_TIME time SA 00:00-23:59
+      EOS
+ 
+        cat << EOS > /etc/squid/working-hour-sites.acl
+      loid-work.com
+      franky-work.com
+      EOS
+ 
+        cat << EOS > /etc/squid/acl-bandwidth.conf
+      delay_pools 1
+      delay_class 1 1
+      delay_access 1 allow WEEKEND_TIME
+      delay_parameters 1 16000/16000
+      EOS
+ 
+        cat << EOS > /etc/squid/acl-port.conf
+      acl HTTPS_PORT port 443
+      acl CONNECT method CONNECT
+      EOS
+ 
+      service squid restart
+     ```
+- Apabila dapat diakses, tampilan akan seperti ini:
+  <br>
+  <img src="Screenshot/13.PNG">
+  <br>
+- Dan apabila tidak dapat diakses, tampilan akan seperti ini:
+  <br>
+  <img src="Screenshot/14.PNG">
+  <br>
 
 # **Kesulitan dalam Pengerjaan**
 - Pada saat soal shift dirilis, terdapat kalimat instruksi yang tidak sesuai. Namun sudah diperbaiki setelah revisi soal shift.
