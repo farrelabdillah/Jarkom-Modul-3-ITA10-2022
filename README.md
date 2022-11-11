@@ -107,6 +107,15 @@ Berikut adalah Dokumentasi dan langkah pengerjaan untuk laporan resmi praktikum 
   <br>
   <img src="Screenshot/8.PNG">
   <br>
+- Melakukan peninstallan bind pada WISE
+  ```
+  elif [[ $(hostname) = "WISE" ]]; then
+    apt update
+    apt install \
+    apache2 \
+    bind9 -y
+  ```
+  
 - Dalam node WISE akan ditambahkan: 
 
   ```
@@ -155,11 +164,60 @@ SSS, Garden, dan Eden digunakan sebagai client Proxy agar pertukaran informasi d
 <img src="Screenshot/Tabel.PNG">
 
 # **Langkah Pengerjaan: Proxy**
+- Karena Berlint akan dijadikan proxy server, maka kami melakukan penginstallan Squid pada Berlint:
+  ```
+  elif [[ $(hostname) = "Berlint" ]]; then
+    apt update
+    apt install \
+    squid -y
+  ```
+  
+- Setelah itu mengaplikasikan lynx pada beberapa node karena SSS, Garden, dan Eden dijadikan sebagai client proxy
+  ```
+  elif [[ $(hostname) = "Eden" ]]; then
+    apt update
+    apt install \
+    lynx \
+    speedtest-cli -y
+  ```
+  ```
+  elif [[ $(hostname) = "SSS" ]]; then
+    apt update
+    apt install \
+    lynx \
+    speedtest-cli -y
+  ```
+  ```
+  elif [[ $(hostname) = "Garden" ]]; then
+    apt update
+    apt install \
+    lynx \
+    speedtest-cli -y
+  ```
+  Selain itu, akan dilakukan penginstallan client speedtest untuk menguji speed limit sesuai dengan tabel.
+- Karena yang diakses nantinya akan berbentuk HTTP dan proxy, maka akan dikonfigurasikan domain proxy dengan:
+  <br>
+  <img src="Screenshot/10.PNG">
+  <br>
+  <br>
+  <img src="Screenshot/11.PNG">
+  <br>
+  <br>
+  <img src="Screenshot/12.PNG">
+  <br>
+  
+- Menentukan HTTP port dengan:
+  ```
+  http_port 8080
+  dns_nameservers 192.214.2.2
+  ```
+  Dan nameserver pada 192.214.2.2 agar dapat connect menuju domain proxy yang dikonfigurasikan (loid-work.com dan franky-work.com).
 -
 -
 -
 -
 -
--
--
--
+
+# **Kesulitan dalam Pengerjaan**
+- Pada saat soal shift dirilis, terdapat kalimat instruksi yang tidak sesuai. Namun sudah diperbaiki setelah revisi soal shift.
+- Terkadang saat melakukan percobaan bagian proxy, syntax dalam script tidak work sehingga ketentuan pada tabel seperti jam/hari akses internet tidak berjalan sesuai dengan script. Hal yang sama juga berlaku pada pembatasan speed atau speedtesting.
